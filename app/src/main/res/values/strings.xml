@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">CR Speed</string>
+    <string name="notification_channel_name">CR Speed Service</string>
+    <string name="notification_channel_desc">Persistent playback speed indicator and controls</string>
+    <string name="action_show_pill">Show speed pill</string>
+    <string name="action_quit">Quit</string>
+    <string name="speed_pill_content_desc">Playback speed pill</string>
+    <string name="hide_pill">Hide pill</string>
+    <string name="apply_speed">Apply</string>
+    <string name="custom_speed_hint">e.g. 1.85</string>
+    <string name="speed_format">%.2fx</string>
+    <string name="invalid_speed_range">Please enter a speed between 0.25 and 4.0</string>
+    <string name="quit_app">Quit</string>
+    <string name="bring_pill_back_tip">Tip: Tap notification or long-press top-left corner to restore pill</string>
+</resources>

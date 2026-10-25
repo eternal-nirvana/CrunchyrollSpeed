@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0A0A10"
+    android:keepScreenOn="true">
+
+    <!-- Primary Crunchyroll WebView -->
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Fullscreen Video Container for HTML5 video custom view -->
+    <FrameLayout
+        android:id="@+id/fullscreenContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000"
+        android:visibility="gone" />
+
+    <!-- Secret Top-Left Screen Corner Recovery Target (Long-press to restore pill if hidden) -->
+    <View
+        android:id="@+id/topLeftRecoveryZone"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="top|start"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@android:color/transparent"
+        android:contentDescription="Corner restore hotspot" />
+
+    <!-- Floating Speed Pill and Panel Container -->
+    <FrameLayout
+        android:id="@+id/pillContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false">
+
+        <!-- The Floating Compact Speed Pill (approx 52x28dp) -->
+        <FrameLayout
+            android:id="@+id/speedPill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="52dp"
+            android:minHeight="28dp"
+            android:background="@drawable/bg_speed_pill"
+            android:clickable="true"
+            android:elevation="14dp"
+            android:focusable="true"
+            android:paddingStart="8dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="4dp">
+
+            <TextView
+                android:id="@+id/tvPillSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-medium"
+                android:includeFontPadding="false"
+                android:text="1.00x"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <!-- Expanded Speed Control Panel Overlay -->
+        <LinearLayout
+            android:id="@+id/speedPanel"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_speed_panel"
+            android:clickable="true"
+            android:elevation="20dp"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <!-- Header -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:id="@+id/tvPanelTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Playback Speed"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/btnClosePanel"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Close speed panel"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_close" />
+            </RelativeLayout>
+
+            <!-- Preset Speeds Grid Row 1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <Button
+                    android:id="@+id/btnPreset100"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="3dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_preset_chip"
+                    android:text="1.0x"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/btnPreset150"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="3dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_preset_chip"
+                    android:text="1.5x"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/btnPreset175"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="3dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_preset_chip"
+                    android:text="1.75x"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- Preset Speeds Grid Row 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="12dp"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <Button
+                    android:id="@+id/btnPreset200"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="3dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_preset_chip"
+                    android:text="2.0x"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/btnPreset225"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="3dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_preset_chip"
+                    android:text="2.25x"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/btnPreset250"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="3dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_preset_chip"
+                    android:text="2.5x"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- Custom Speed Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:text="Custom Speed (0.25 - 4.0)"
+                android:textColor="#AAAAAA"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnMinusSpeed"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_preset_chip"
+                    android:text="-"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etCustomSpeed"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_custom_input"
+                    android:gravity="center"
+                    android:hint="1.00"
+                    android:imeOptions="actionDone"
+                    android:inputType="numberDecimal"
+                    android:maxLength="5"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#66FFFFFF"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/btnPlusSpeed"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_preset_chip"
+                    android:text="+"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnApplyCustomSpeed"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_btn_orange"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:text="@string/apply_speed"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="14dp"
+                android:layout_marginBottom="12dp"
+                android:background="#22FFFFFF" />
+
+            <!-- Bottom Actions: Hide Pill & Quit -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <Button
+                    android:id="@+id/btnHidePill"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_preset_chip"
+                    android:drawableStart="@drawable/ic_visibility_off"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:text="@string/hide_pill"
+                    android:textColor="#CCCCCC"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btnQuitApp"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_btn_danger"
+                    android:drawableStart="@drawable/ic_power_settings"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:text="@string/quit_app"
+                    android:textColor="#FF7777"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <!-- Tip text -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="@string/bring_pill_back_tip"
+                android:textColor="#777777"
+                android:textSize="10sp" />
+        </LinearLayout>
+    </FrameLayout>
+</FrameLayout>
