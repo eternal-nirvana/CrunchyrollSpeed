@@ -31,6 +31,17 @@ jobs:
       - name: Grant Execute Permission for Gradlew
         run: chmod +x gradlew
 
+      - name: Create or Restore Keystore & Environment
+        run: |
+          touch .env
+          if [ -f debug.keystore.base64 ]; then
+            base64 -d debug.keystore.base64 > debug.keystore 2>/dev/null || true
+          fi
+          if [ ! -f debug.keystore ]; then
+            keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          fi
+          ls -la debug.keystore
+
       - name: Build Debug APK
         run: ./gradlew :app:assembleDebug --stacktrace
 
@@ -88,9 +99,7 @@ jobs:
       - name: Upload Binaries to Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.event.release.tag_name || 'v1.0.0' }}
-          files: |
-            ./final-assets/CR-Speed.apk
-            ./final-assets/CR-Speed.exe
+          tag_name: ${{ github.event.release.tag_name || github.ref_name || 'v1.0.0' }}
+          files: ./final-assets/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
