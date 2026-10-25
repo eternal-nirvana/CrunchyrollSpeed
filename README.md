@@ -1,151 +1,159 @@
 # CR Speed - Crunchyroll Video Playback Speed Controller
 
-**CR Speed** is a dedicated Android app built with Kotlin that provides real-time, customizable video playback speed control for Crunchyroll's web player. It features an interactive floating pill UI, background foreground service controls, HTML5 fullscreen support, and complete one-tap shutdown.
+[![License: MIT](https://img.shields.io/github/license/eternal-nirvana/CrunchyrollSpeed)](https://github.com/eternal-nirvana/CrunchyrollSpeed/blob/main/LICENSE)
+[![Latest release](https://img.shields.io/github/v/release/eternal-nirvana/CrunchyrollSpeed)](https://github.com/eternal-nirvana/CrunchyrollSpeed/releases/latest)
+
+**A lightweight playback-speed controller for Crunchyroll, for Android and Windows.**
+
+CR Speed opens Crunchyroll's web player and adds a small floating speed pill on top of it. Switch between presets like 1.5×, 2× or 2.5×, or dial in any custom speed from 0.25× to 4.0×. When you're done, one tap shuts everything down.
+
+> **Disclaimer:** CR Speed is an unofficial, independent project. It is not affiliated with, endorsed by, or connected to Crunchyroll. You need your own Crunchyroll account to watch content.
+
+---
+
+## Download
+
+Get the latest APK (Android) and EXE (Windows) from the [**Releases page**](https://github.com/eternal-nirvana/CrunchyrollSpeed/releases/latest).
+
+**Android:** download `CR-Speed.apk`, open it, and allow "Install from unknown sources" if your phone asks. Requires Android 8.0 (API 26) or newer.
+
+**Windows:** download `CR-Speed.exe` and run it.
 
 ---
 
 ## Features
 
-- **Automated JavaScript Speed Enforcement**:
-  - Automatically identifies HTML5 `<video>` elements using a `MutationObserver` (accommodating asynchronous player loading).
-  - Enforces playback speed and re-applies automatically upon ad breaks, episode transitions, and site rate changes (`ratechange`, `play`, `loadedmetadata`, `timeupdate`).
-  - Supports preset speeds (`1.0x`, `1.5x`, `1.75x`, `2.0x`, `2.25x`, `2.5x`) and custom speeds from `0.25x` to `4.0x` in `0.05` increments.
-
-- **Floating Speed Pill UI**:
-  - Compact, semi-transparent badge (~52x28dp) floating above the player showing the active speed.
-  - Draggable anywhere on screen, remembering its coordinates across orientations and app restarts.
-  - Tap to expand a quick-control panel with presets, fine-tuning buttons (`-` / `+` 0.05), custom entry, and collapse.
-  - Retains visibility and interaction on top of fullscreen video playback.
-
-- **Hide & Restore Gestures**:
-  - **Hide Pill**: Temporarily removes the pill from view while maintaining active playback speed.
-  - **Restore Hotspot**: Long-press the top-left screen corner (56x56dp hotspot) to restore the pill anytime.
-  - **Notification Restore**: Tap "Show speed pill" in the persistent status bar notification.
-
-- **Persistent Foreground Service**:
-  - Low-priority, persistent notification showing active speed.
-  - Quick action buttons directly from the notification shade: **"Show speed pill"** and **"Quit"**.
-
-- **Clean Background Shutdown**:
-  - Complete shutdown via the pill panel or notification: stops foreground service, cancels notifications, purges and destroys the WebView (`about:blank`), clears tasks (`finishAndRemoveTask()`), and terminates the process (`Process.killProcess()`) to guarantee zero residual CPU or battery consumption.
-
-- **Restricted Secure Navigation**:
-  - Whitelisted navigation strictly to Crunchyroll, auth providers, and video delivery CDNs. External links (social, ads) safely open in external browsers.
+- **Automatic speed enforcement**
+  - Detects the HTML5 `<video>` player, even when it loads late.
+  - Re-applies your speed after ad breaks, episode changes, and site-side rate resets.
+  - Presets: `1.0x`, `1.5x`, `1.75x`, `2.0x`, `2.25x`, `2.5x`.
+  - Custom speeds from `0.25x` to `4.0x` in `0.05` steps.
+- **Floating speed pill**
+  - Small, semi-transparent badge showing the current speed.
+  - Draggable anywhere; remembers its position across rotations and restarts.
+  - Tap it to open a panel with presets, `-` / `+` fine-tuning, and custom entry.
+  - Stays visible on top of fullscreen video.
+- **Hide and restore**
+  - **Hide** the pill while keeping your chosen speed active.
+  - **Restore** by long-pressing the top-left corner of the screen, or by tapping "Show speed pill" in the notification.
+- **Foreground service notification** (Android)
+  - Shows the active speed, with **Show speed pill** and **Quit** actions.
+- **Clean shutdown**
+  - Quit from the panel or the notification to stop the service, clear the notification, destroy the WebView, and end the process, so nothing keeps using CPU or battery.
+- **Restricted navigation**
+  - Only Crunchyroll, its login providers, and video CDNs load inside the app. Other links open in your external browser.
 
 ---
 
-## Architecture & Code Structure
+## How to use
 
-```
-CR-Speed/
-├── app/src/main/
-│   ├── java/com/example/
-│   │   ├── MainActivity.kt         # WebView hosting, fullscreen WebChromeClient, and pill touch handling
-│   │   ├── SpeedViewModel.kt       # Reactive StateFlows, input validation, and preset speed logic
-│   │   ├── SpeedPrefs.kt           # SharedPreferences manager for speeds, positions, and visibility
-│   │   ├── SpeedService.kt         # Foreground Service & persistent notification handling
-│   │   └── PlayerJs.kt             # JavaScript injection scripts with MutationObserver & event hooks
-│   └── res/
-│       ├── layout/activity_main.xml# Root FrameLayout with WebView, Fullscreen container & Speed Pill
-│       ├── drawable/               # Custom themed drawables & adaptive app icons
-│       └── values/                 # Strings and theme configurations
-```
+1. Open the app and sign in to Crunchyroll.
+2. Start any episode.
+3. Tap the speed pill and pick a preset, or use `-` / `+` or custom entry.
+4. Tap **Hide** if the pill is in the way. Long-press the top-left corner to bring it back.
+5. Tap **Quit** when finished.
+
+### Windows keyboard shortcuts
+
+| Key | Action |
+|-----|--------|
+| `]` | Increase speed |
+| `[` | Decrease speed |
+| `\` | Reset to 1.0x |
 
 ---
 
-## Building & Installing the APK
+## Build from source
 
-### 1. Build via Gradle Command Line
-To assemble the debug APK:
+### Android
+
 ```bash
-gradle :app:assembleDebug
-```
-The generated APK will be located at:
-```
-app/build/outputs/apk/debug/app-debug.apk
+git clone https://github.com/eternal-nirvana/CrunchyrollSpeed.git
+cd CrunchyrollSpeed
+
+# Debug APK
+./gradlew :app:assembleDebug
+
+# Release APK
+./gradlew :app:assembleRelease
 ```
 
-To assemble the release APK:
-```bash
-gradle :app:assembleRelease
-```
+The debug APK is created at `app/build/outputs/apk/debug/app-debug.apk`.
 
-### 2. Install onto Device via ADB
-Connect your Android phone with USB debugging enabled, then run:
+Install it on a connected phone (USB debugging on):
+
 ```bash
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
-### 3. Open in Android Studio
-1. Launch Android Studio.
-2. Select **File > Open...** and navigate to this project folder.
-3. Allow Gradle to sync.
-4. Click **Run (▶)** targeting your connected device or emulator (Android 8.0+ / API 26+).
+Or open the project in **Android Studio**, let Gradle sync, and press **Run**.
+
+### Windows
+
+The desktop version lives in [`desktop/`](desktop/) (`cr_speed.py`). To build the EXE on a Windows PC, run:
+
+```bat
+desktop\build_exe.bat
+```
 
 ---
 
-## Desktop Version for Windows Laptops
+## Project structure
 
-A standalone desktop version is included under `/desktop`:
-- **File**: `desktop/cr_speed.py`
-- **Features**: Native Windows WebView player with the exact same floating speed pill, preset speeds, custom inputs, and keyboard shortcuts (`[` and `]` to step speed, `\` to reset to 1.0x).
-- **Compiling to EXE**:
-  Run `desktop\build_exe.bat` on any Windows PC or let GitHub Actions build it automatically.
-
----
-
-## Publishing to GitHub Releases (APK + EXE)
-
-### Option 1: Automatic Release via GitHub Actions (Recommended)
-1. Push this repository to GitHub.
-2. Go to the **Releases** section on your repository (visible in your screenshot) and click **"Create a new release"**.
-3. Choose or type a tag name like `v1.0.0`, give it a title (e.g. `CR Speed v1.0.0`), and click **"Publish release"**.
-4. The included GitHub Actions workflow (`.github/workflows/release.yml`) will automatically trigger:
-   - Builds `CR-Speed.apk` for Android on Ubuntu.
-   - Builds `CR-Speed.exe` for Windows Laptops on Windows.
-   - Automatically attaches both `CR-Speed.apk` and `CR-Speed.exe` to that release!
-
-### Option 2: Manual Direct Upload to GitHub Releases
-1. On your GitHub repository page (from your screenshot), click **"Create a new release"**.
-2. Type tag: `v1.0.0` and title: `CR Speed Initial Release`.
-3. Scroll down to the box: **"Attach binaries by dropping them here or selecting them"**.
-4. Drag and drop:
-   - `CR-Speed.apk` (located at root of project / `app/build/outputs/apk/debug/app-debug.apk`)
-   - `CR-Speed.exe` (from the desktop build or GitHub Action)
-5. Click **"Publish release"**. Both binaries will now be permanently available for download in the Releases section.
+```
+CrunchyrollSpeed/
+├── app/src/main/
+│   ├── java/com/example/
+│   │   ├── MainActivity.kt    # WebView host, fullscreen handling, pill touch events
+│   │   ├── SpeedViewModel.kt  # State, input validation, preset logic
+│   │   ├── SpeedPrefs.kt      # Saved speed, pill position, visibility
+│   │   ├── SpeedService.kt    # Foreground service and notification
+│   │   └── PlayerJs.kt        # Injected JavaScript (MutationObserver + event hooks)
+│   └── res/                   # Layouts, drawables, strings, themes
+├── desktop/                   # Windows version
+├── .github/workflows/         # Automated release builds
+├── LICENSE                    # MIT License
+└── README.md
+```
 
 ---
 
-## Exporting & Pushing to GitHub
+## Releasing (for maintainers)
 
-In Google AI Studio Build:
-1. Click the **Export / Settings** menu in the top right header.
-2. Select **Push to GitHub** or **Export to GitHub**.
-3. Authenticate with your GitHub account, choose your repository name, and submit.
-4. Alternatively, select **Download ZIP** to download the complete codebase locally, initialize Git, and push with:
-   ```bash
-   git init
-   git add .
-   git commit -m "CR Speed: Android APK & Windows Laptop EXE with GitHub Release workflow"
-   git branch -M main
-   git remote add origin https://github.com/<your-username>/<repo-name>.git
-   git push -u origin main
-   ```
+Publishing a release triggers the GitHub Actions workflow in `.github/workflows/release.yml`, which builds both files and attaches them to the release.
+
+1. Go to **Releases → Draft a new release**.
+2. Create a tag such as `v1.0.0` and add a title.
+3. Click **Publish release**.
+4. The workflow builds `CR-Speed.apk` (Ubuntu) and `CR-Speed.exe` (Windows) and uploads them automatically.
 
 ---
 
-## Testing Checklist
+## Testing checklist
 
-- [x] **Preset Speeds**: Tap presets `1.5x`, `1.75x`, `2.0x`, `2.25x`, `2.5x` and verify immediate video rate change.
-- [x] **Custom Speeds**: Test values between `0.25x` and `4.0x` via manual entry or step buttons (`+`/`-`).
-- [x] **Pill Drag & Memory**: Drag pill to new coordinates, rotate device, and verify position persists.
-- [x] **Hide/Show Pill**: Hide pill via panel; restore via top-left corner long-press or notification action.
-- [x] **Fullscreen Playback**: Enter fullscreen video; confirm video rotates to landscape and pill floats on top.
-- [x] **Clean Termination**: Tap "Quit" in panel or notification; verify notification is removed and app process is terminated.
+- Presets (`1.5x` to `2.5x`) change the video speed immediately.
+- Custom values between `0.25x` and `4.0x` work via entry and `-` / `+`.
+- The pill keeps its position after dragging and rotating.
+- Hide and restore work via the corner long-press and the notification.
+- Fullscreen rotates to landscape and the pill stays on top.
+- **Quit** removes the notification and ends the app process.
 
 ---
 
-## Known Limitations
+## Known limitations
 
-- **DRM Video Restrictions**: Certain high-definition streams protected by Widevine DRM may limit hardware decoder clocks above `2.0x`.
-- **Site Layout Changes**: The injection relies on standard HTML5 `<video>` tags. If Crunchyroll updates player wrappers or nests players in isolated cross-origin frames, script selectors may need updating.
+- **DRM:** Some Widevine-protected streams may limit decoding above `2.0x`.
+- **Site changes:** The script relies on a standard HTML5 `<video>` element. If Crunchyroll changes its player or moves it into an isolated cross-origin frame, the selectors may need updating.
+- **Unofficial:** Crunchyroll can change its site at any time, which may temporarily break the app.
+
+---
+
+## Contributing
+
+Issues and pull requests are welcome. If something breaks after a Crunchyroll update, please open an issue with your device or OS version and what you saw.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](https://github.com/eternal-nirvana/CrunchyrollSpeed/blob/main/LICENSE). See the `LICENSE` file for details.
