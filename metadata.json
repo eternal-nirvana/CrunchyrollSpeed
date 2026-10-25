@@ -1,6 +1,0 @@
-{
-  "name": "CR Speed",
-  "description": "Crunchyroll video playback speed controller with floating pill UI, speed persistence, and quick controls.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
