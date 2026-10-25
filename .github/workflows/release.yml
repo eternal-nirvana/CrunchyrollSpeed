@@ -2,7 +2,7 @@ name: Build & Publish Release (APK + EXE)
 
 on:
   release:
-    types: [published]
+    types: [published, created]
   workflow_dispatch:
   push:
     tags:
@@ -28,10 +28,13 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Build Debug APK
-        run: gradle :app:assembleDebug
+      - name: Grant Execute Permission for Gradlew
+        run: chmod +x gradlew
 
-      - name: Rename & Upload APK Artifact
+      - name: Build Debug APK
+        run: ./gradlew :app:assembleDebug --stacktrace
+
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: CR-Speed-Android-APK
@@ -67,30 +70,27 @@ jobs:
   publish:
     name: Attach Binaries to GitHub Release
     needs: [build-android, build-windows]
+    if: always() && (needs.build-android.result == 'success' || needs.build-windows.result == 'success')
     runs-on: ubuntu-latest
     steps:
-      - name: Download Android APK
+      - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: CR-Speed-Android-APK
           path: ./release-assets
 
-      - name: Rename APK
+      - name: Prepare Assets
         run: |
-          mv ./release-assets/app-debug.apk ./release-assets/CR-Speed.apk
-
-      - name: Download Windows EXE
-        uses: actions/download-artifact@v4
-        with:
-          name: CR-Speed-Windows-EXE
-          path: ./release-assets
+          mkdir -p ./final-assets
+          find ./release-assets -type f -name "*.apk" -exec cp {} ./final-assets/CR-Speed.apk \; || true
+          find ./release-assets -type f -name "*.exe" -exec cp {} ./final-assets/CR-Speed.exe \; || true
+          ls -la ./final-assets/
 
       - name: Upload Binaries to Release
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'release'
         with:
+          tag_name: ${{ github.event.release.tag_name || 'v1.0.0' }}
           files: |
-            ./release-assets/CR-Speed.apk
-            ./release-assets/CR-Speed.exe
+            ./final-assets/CR-Speed.apk
+            ./final-assets/CR-Speed.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
