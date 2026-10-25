@@ -84,19 +84,51 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 ---
 
+## Desktop Version for Windows Laptops
+
+A standalone desktop version is included under `/desktop`:
+- **File**: `desktop/cr_speed.py`
+- **Features**: Native Windows WebView player with the exact same floating speed pill, preset speeds, custom inputs, and keyboard shortcuts (`[` and `]` to step speed, `\` to reset to 1.0x).
+- **Compiling to EXE**:
+  Run `desktop\build_exe.bat` on any Windows PC or let GitHub Actions build it automatically.
+
+---
+
+## Publishing to GitHub Releases (APK + EXE)
+
+### Option 1: Automatic Release via GitHub Actions (Recommended)
+1. Push this repository to GitHub.
+2. Go to the **Releases** section on your repository (visible in your screenshot) and click **"Create a new release"**.
+3. Choose or type a tag name like `v1.0.0`, give it a title (e.g. `CR Speed v1.0.0`), and click **"Publish release"**.
+4. The included GitHub Actions workflow (`.github/workflows/release.yml`) will automatically trigger:
+   - Builds `CR-Speed.apk` for Android on Ubuntu.
+   - Builds `CR-Speed.exe` for Windows Laptops on Windows.
+   - Automatically attaches both `CR-Speed.apk` and `CR-Speed.exe` to that release!
+
+### Option 2: Manual Direct Upload to GitHub Releases
+1. On your GitHub repository page (from your screenshot), click **"Create a new release"**.
+2. Type tag: `v1.0.0` and title: `CR Speed Initial Release`.
+3. Scroll down to the box: **"Attach binaries by dropping them here or selecting them"**.
+4. Drag and drop:
+   - `CR-Speed.apk` (located at root of project / `app/build/outputs/apk/debug/app-debug.apk`)
+   - `CR-Speed.exe` (from the desktop build or GitHub Action)
+5. Click **"Publish release"**. Both binaries will now be permanently available for download in the Releases section.
+
+---
+
 ## Exporting & Pushing to GitHub
 
 In Google AI Studio Build:
 1. Click the **Export / Settings** menu in the top right header.
 2. Select **Push to GitHub** or **Export to GitHub**.
-3. Authenticate with your GitHub account, choose a repository name, and submit to push the complete repository including all source code, assets, and Gradle build configurations.
+3. Authenticate with your GitHub account, choose your repository name, and submit.
 4. Alternatively, select **Download ZIP** to download the complete codebase locally, initialize Git, and push with:
    ```bash
    git init
    git add .
-   git commit -m "Initial commit: CR Speed"
-   git remote add origin https://github.com/<your-username>/<repo-name>.git
+   git commit -m "CR Speed: Android APK & Windows Laptop EXE with GitHub Release workflow"
    git branch -M main
+   git remote add origin https://github.com/<your-username>/<repo-name>.git
    git push -u origin main
    ```
 

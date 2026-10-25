@@ -1,0 +1,96 @@
+name: Build & Publish Release (APK + EXE)
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build Debug APK
+        run: gradle :app:assembleDebug
+
+      - name: Rename & Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CR-Speed-Android-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
+
+  build-windows:
+    name: Build Windows Laptop EXE
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pywebview pyinstaller
+
+      - name: Build Windows Executable
+        run: |
+          pyinstaller --onefile --windowed --name "CR-Speed" desktop/cr_speed.py
+
+      - name: Upload Windows EXE Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CR-Speed-Windows-EXE
+          path: dist/CR-Speed.exe
+
+  publish:
+    name: Attach Binaries to GitHub Release
+    needs: [build-android, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Android APK
+        uses: actions/download-artifact@v4
+        with:
+          name: CR-Speed-Android-APK
+          path: ./release-assets
+
+      - name: Rename APK
+        run: |
+          mv ./release-assets/app-debug.apk ./release-assets/CR-Speed.apk
+
+      - name: Download Windows EXE
+        uses: actions/download-artifact@v4
+        with:
+          name: CR-Speed-Windows-EXE
+          path: ./release-assets
+
+      - name: Upload Binaries to Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'release'
+        with:
+          files: |
+            ./release-assets/CR-Speed.apk
+            ./release-assets/CR-Speed.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
